@@ -13,10 +13,10 @@ def dump_dcminfo2xlsx(dcm_root):
     :return:
     """
     d = {'patient_no': [], 'patient_id': [], 'patient_name': [], 'patient_level_comments': [],
-         'series_description': [], 'series_rootname': []}
+         'series_description': [], 'series_rootname': [], 'series_aka':[], 'conv2dcm':[],
+         'series_root':[]}
     patient_rootnames = os.listdir(dcm_root)
     for patient_rootname in patient_rootnames:
-        #print(patient_rootname)
         patient_root = os.path.join(dcm_root, patient_rootname)
         series_rootnames = os.listdir(patient_root)
         patient_info = patient_rootname.split(' ')
@@ -29,29 +29,34 @@ def dump_dcminfo2xlsx(dcm_root):
                 for file in files:
                     a = os.path.join(sub_root, file)
                     if file.endswith('.dcm'): dcm_files.append(a)
+                    # for SIEMENS dicom data
+                    if file.endswith('.ima'): dcm_files.append(a)
                     if len(dcm_files) > 1: continue
                     if is_dicom(a): dcm_files.append(a)
-                    if len(dcm_files) > 1: continue
             if len(dcm_files) < 1:
                 print('..... failed - %s : %s' % (patient_rootname, series_rootname))
                 continue
             dcm_file = dcm_files[0]
             ds = pydicom.read_file(dcm_file, force=True)
             try:
-                success = False
                 patient_id = ds.PatientID
                 patient_name = ds.PatientName
                 series_description = ds.SeriesDescription
-                success = True
-                if success:
-                    d['patient_no'].append(patient_no)
-                    d['patient_id'].append(patient_id)
-                    d['patient_name'].append(patient_name)
-                    d['patient_level_comments'].append(patient_level_comment)
-                    d['series_description'].append(series_description)
-                    d['series_rootname'].append(series_rootname)
             except:
-                print('................ %s'%(dcm_file))
+                patient_id = 'PatientID'
+                patient_name = 'PatientName'
+                series_description = 'SeriesDescription'
+
+            d['patient_no'].append(patient_no)
+            d['patient_id'].append(patient_id)
+            d['patient_name'].append(patient_name)
+            d['patient_level_comments'].append(patient_level_comment)
+            d['series_description'].append(series_description)
+            d['series_rootname'].append(series_rootname)
+            d['series_aka'].append(series_description)
+            d['conv2dcm'].append('FALSE')
+            d['series_root'].append(os.path.dirname(dcm_file))
+
     info = pd.DataFrame(d)
     return info
 #-----------------------------------------------------------------------------------------
@@ -62,4 +67,4 @@ def dump_dcminfo2xlsx(dcm_root):
 #
 dcm_root = 'F:\\huaxi\\Liver-EOB-DCM'
 df = dump_dcminfo2xlsx(dcm_root)
-df.to_excel(os.path.join(dcm_root, 'info.xlsx'))
+df.to_excel(os.path.join('F:\\huaxi', 'dcm_info.xlsx'))
