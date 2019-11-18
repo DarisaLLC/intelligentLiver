@@ -19,9 +19,9 @@ def get_dcm2niix_bin():
     """
     :return:
     """
-    if sys.platform == 'win32': dcm2niix_bin = os.path.join(DCM2NIIX_ROOT, 'dcm2niix.exe')
-    elif sys.platform == 'linux': dcm2niix_bin = os.path.join(DCM2NIIX_ROOT, 'dcm2niix')
-    elif sys.platform == 'macos': dcm2niix_bin = os.path.join(DCM2NIIX_ROOT, 'dcm2niix')
+    if sys.platform == 'win32': dcm2niix_bin = os.path.join(DCM2NIIX_ROOT, 'dcm2niix_win.exe')
+    elif sys.platform == 'linux': dcm2niix_bin = os.path.join(DCM2NIIX_ROOT, 'dcm2niix_lnx')
+    elif sys.platform == 'macos': dcm2niix_bin = os.path.join(DCM2NIIX_ROOT, 'dcm2niix_mac')
     else: dcm2niix_bin = ''
     return dcm2niix_bin
 #-----------------------------------------------------------------------------------------------------
